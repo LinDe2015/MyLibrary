@@ -18,6 +18,11 @@ public class FileUtils
         return read(new File(AppWrapper.c().getCacheDir(), fileName));
     }
 
+    public static boolean writeCache(String fileName, String write)
+    {
+        return writeCache(fileName, write, false);
+    }
+
     public static boolean writeCache(String fileName, String write, boolean append)
     {
         return write(new File(AppWrapper.c().getCacheDir(), fileName), write, append);
@@ -26,6 +31,11 @@ public class FileUtils
     public static String readFile(String fileName)
     {
         return read(new File(AppWrapper.c().getFilesDir(), fileName));
+    }
+
+    public static boolean writeFile(String fileName, String write)
+    {
+        return writeFile(fileName, write, false);
     }
 
     public static boolean writeFile(String fileName, String write, boolean append)

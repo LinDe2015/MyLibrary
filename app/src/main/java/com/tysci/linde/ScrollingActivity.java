@@ -5,20 +5,16 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
-
-import utils.linde.library.LogUtils;
+import utils.linde.library.calendar.DateFormatUtils;
+import utils.linde.library.calendar.TimeFormatEnum;
+import utils.linde.library.calendar.TimeZoneEnum;
 
 public class ScrollingActivity extends AppCompatActivity
 {
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -27,35 +23,16 @@ public class ScrollingActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                final String time = DateFormatUtils.getInstance().getString(TimeZoneEnum.DEFAULT, TimeFormatEnum.yyyy_mm_dd_HH_mm_ss, 2015, 2, 11);
+                Snackbar.make(fab, time, Snackbar.LENGTH_LONG).show();
             }
         });
-        testDate();
-    }
-
-    /**
-     * TODO
-     */
-    private void testDate()
-    {
-        final Date date = new Date();
-        date.setYear(2015-1900);
-        date.setMonth(11-1);
-        date.setDate(20);
-        date.setHours(0);
-        date.setMinutes(0);
-        date.setSeconds(0);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-d", Locale.getDefault());
-        LogUtils.logE("TAG", sdf.format(date));
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-        LogUtils.logE("TAG", sdf.format(date));
     }
 
     @Override

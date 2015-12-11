@@ -1,14 +1,13 @@
 package utils.linde.library.volley;
 
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import java.util.Set;
+import java.util.HashMap;
 
 import utils.linde.library.AppWrapper;
 import utils.linde.library.R;
@@ -20,11 +19,17 @@ import utils.linde.library.R;
  */
 public class BaseStringRequest extends StringRequest
 {
+    private static final HashMap<String, OnResponseListener> mResponses = new HashMap<>();
     private static RequestQueue mRequestQueue;
 
-    private BaseStringRequest(int method, String url, Response.Listener<String> listener, Response.ErrorListener errorListener)
+    public BaseStringRequest(String url, OnResponseListener listener)
     {
-        super(method, url, listener, errorListener);
+        this(Method.GET, url, listener);
+    }
+
+    public BaseStringRequest(int method, String url, OnResponseListener listener)
+    {
+        super(method, url, new BaseListener(url), new BaseErrorListener(url));
         if (mRequestQueue == null)
         {
             synchronized (BaseStringRequest.class)
@@ -35,10 +40,13 @@ public class BaseStringRequest extends StringRequest
                 }
             }
         }
-        if (isRequesting(url))
+        if (mResponses.containsKey(url))
         {
+            mResponses.remove(url);
+            mResponses.put(url, listener);
             return;
         }
+        mResponses.put(url, listener);
         setRetryPolicy(new DefaultRetryPolicy(
                 AppWrapper.c().getResources().getInteger(R.integer.connect_time_out),
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
@@ -47,47 +55,48 @@ public class BaseStringRequest extends StringRequest
         mRequestQueue.add(this);
     }
 
-    private boolean isRequesting(String url)
+    private static class BaseListener implements Response.Listener<String>
     {
-        final Set<Request<?>> requests = mRequestQueue.getCurrentRequests();
-        for (Request<?> request : requests)
+        private final String url;
+
+        BaseListener(String url)
         {
-            if (request.getUrl().equals(url))
-            {
-                return true;
-            }
+            this.url = url;
         }
-        return false;
-    }
-}
 
-class BaseListener implements Response.Listener<String>
-{
-    private final String url;
-
-    BaseListener(String url)
-    {
-        this.url = url;
-    }
-
-    @Override
-    public void onResponse(String s)
-    {
-    }
-}
-
-class BaseErrorListener implements Response.ErrorListener
-{
-    private final String url;
-
-    BaseErrorListener(String url)
-    {
-        this.url = url;
+        @Override
+        public void onResponse(String s)
+        {
+            final OnResponseListener listener = mResponses.get(url);
+            if (listener != null)
+            {
+                listener.onResponse(s);
+            }
+            mResponses.remove(url);
+        }
     }
 
-    @Override
-    public void onErrorResponse(VolleyError volleyError)
+    private static class BaseErrorListener implements Response.ErrorListener
     {
+        private final String url;
+
+        BaseErrorListener(String url)
+        {
+            this.url = url;
+        }
+
+        @Override
+        public void onErrorResponse(VolleyError volleyError)
+        {
+
+            final OnResponseListener listener = mResponses.get(url);
+
+            if (listener != null)
+            {
+                listener.onErrorResponse(volleyError);
+            }
+            mResponses.remove(url);
+        }
     }
 }
 
