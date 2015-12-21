@@ -11,7 +11,7 @@ public enum TimeZoneEnum
     /**
      * 格林威治时区
      */
-    GMT("GMT");
+    GMT("GMT"), UTC("UTC");
 
     public final String value;
 

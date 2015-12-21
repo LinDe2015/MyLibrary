@@ -15,6 +15,7 @@ import utils.linde.library.calendar.TimeZoneEnum;
 
 public class ScrollingActivity extends AppCompatActivity
 {
+    //    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -33,6 +34,11 @@ public class ScrollingActivity extends AppCompatActivity
                 Snackbar.make(fab, time, Snackbar.LENGTH_LONG).show();
             }
         });
+//        final String[] apis = Build.SUPPORTED_ABIS;
+//        for (String abi : apis)
+//        {
+//            LogUtils.logE("SUPPORTED_ABIS", abi);
+//        }
     }
 
     @Override

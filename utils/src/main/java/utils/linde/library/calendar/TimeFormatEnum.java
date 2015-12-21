@@ -11,7 +11,8 @@ public enum TimeFormatEnum
     yyyy_MM_dd_HH_mm("yy-MM-dd HH:mm"),
     yyyy_mm_dd_HH_mm_ss("yyyy-MM-dd HH:mm:ss"),
     MM_dd("MM-dd"),
-    hh_mm("hh:mm");
+    HH_mm_ss("HH:mm:ss"),
+    HH_mm("HH:mm");
     public final String value;
 
     TimeFormatEnum(String value)
